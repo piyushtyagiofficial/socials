@@ -1,54 +1,108 @@
-import { useSelector } from "react-redux";
-import Auth from "./pages/Auth";
-import Profile from "./pages/Profile";
-import Home from "./pages/Home";
-import { Routes, Route, Navigate } from "react-router-dom";
-import Chat from "./pages/Chat";
-import Chat2 from "./pages/Chat2";
-import UserProfile from "./pages/UserProfile";
+import React, { useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
+import { getUserProfile } from './slices/authSlice';
+import Layout from './components/Layout';
+import Landing from './pages/Landing';
+import Login from './pages/Login';
+import Register from './pages/Register';
+import Feed from './pages/Feed';
+import Profile from './pages/Profile';
+import EditProfile from './pages/EditProfile';
+import PostDetail from './pages/PostDetail';
+import Search from './pages/Search';
+import Chat from './pages/Chat';
 
-function App() {
-  const user = useSelector((state) => state.authReducer.authData);
+const App = () => {
+  const { userInfo, loading } = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (userInfo) {
+      dispatch(getUserProfile());
+    }
+  }, [dispatch, userInfo]);
+
+  const ProtectedRoute = ({ children }) => {
+    if (loading) return <div className="flex items-center justify-center min-h-screen">Loading...</div>;
+    return userInfo ? children : <Navigate to="/login" />;
+  };
+
+  const PublicRoute = ({ children }) => {
+    return !userInfo ? children : <Navigate to="/feed" />;
+  };
 
   return (
-    <div className="relative overflow-hidden text-[#242d49] bg-[#f3f3f3] p-4 min-h-screen">
-      {/* Blur effects */}
-      <div className="absolute w-[22rem] h-[14rem] rounded-full bg-[#a6ddf0] filter blur-[72px] top-[-18%] right-0 z-0"></div>
-      <div className="absolute w-[22rem] h-[14rem] rounded-full bg-[#a6ddf0] filter blur-[72px] top-[36%] -left-32 z-0"></div>
-
-      {/* Routes */}
+    <Router>
       <Routes>
-        <Route
-          path="/"
-          element={user ? <Navigate to="home" /> : <Navigate to="auth" />}
-        />
-        <Route
-          path="/home"
-          element={user ? <Home /> : <Navigate to="../auth" />}
-        />
-        <Route
-          path="/auth"
-          element={user ? <Navigate to="../home" /> : <Auth />}
-        />
-        <Route
-          path="/profile/:id"
-          element={user ? <Profile /> : <Navigate to="../auth" />}
-        />
-        <Route
-          path="/UserProfile/:id"
-          element={user ? <UserProfile /> : <Navigate to="../auth" />}
-        />
-        <Route
-          path="/chat"
-          element={user ? <Chat /> : <Navigate to="../auth" />}
-        />
-        <Route
-          path="/chat/:id"
-          element={user ? <Chat /> : <Navigate to="../auth" />}
-        />
+        <Route path="/" element={
+          <PublicRoute>
+            <Landing />
+          </PublicRoute>
+        } />
+        <Route path="/login" element={
+          <PublicRoute>
+            <Login />
+          </PublicRoute>
+        } />
+        <Route path="/register" element={
+          <PublicRoute>
+            <Register />
+          </PublicRoute>
+        } />
+        <Route path="/feed" element={
+          <ProtectedRoute>
+            <Layout>
+              <Feed />
+            </Layout>
+          </ProtectedRoute>
+        } />
+        <Route path="/profile/:id" element={
+          <ProtectedRoute>
+            <Layout>
+              <Profile />
+            </Layout>
+          </ProtectedRoute>
+        } />
+        <Route path="/profile/edit" element={
+          <ProtectedRoute>
+            <Layout>
+              <EditProfile />
+            </Layout>
+          </ProtectedRoute>
+        } />
+        <Route path="/post/:id" element={
+          <ProtectedRoute>
+            <Layout>
+              <PostDetail />
+            </Layout>
+          </ProtectedRoute>
+        } />
+        <Route path="/search" element={
+          <ProtectedRoute>
+            <Layout>
+              <Search />
+            </Layout>
+          </ProtectedRoute>
+        } />
+        <Route path="/chat" element={
+          <ProtectedRoute>
+            <Layout>
+              <Chat />
+            </Layout>
+          </ProtectedRoute>
+        } />
+        <Route path="/chat/:id" element={
+          <ProtectedRoute>
+            <Layout>
+              <Chat />
+            </Layout>
+          </ProtectedRoute>
+        } />
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
-    </div>
+    </Router>
   );
-}
+};
 
 export default App;
