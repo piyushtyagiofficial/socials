@@ -1,15 +1,15 @@
-import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
-import { register, resetAuthState } from '../slices/authSlice';
-import { UserPlus, Mail, Lock, User } from 'lucide-react';
+import React, { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { register, resetAuthState } from "../slices/authSlice";
+import { UserPlus, Mail, Lock, User } from "lucide-react";
 
 const Register = () => {
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [passwordError, setPasswordError] = useState('');
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [passwordError, setPasswordError] = useState("");
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -18,7 +18,7 @@ const Register = () => {
 
   useEffect(() => {
     if (userInfo) {
-      navigate('/feed');
+      navigate("/feed");
     }
 
     return () => {
@@ -28,22 +28,22 @@ const Register = () => {
 
   const validatePasswords = () => {
     if (password !== confirmPassword) {
-      setPasswordError('Passwords do not match');
+      setPasswordError("Passwords do not match");
       return false;
     }
-    
+
     if (password.length < 6) {
-      setPasswordError('Password must be at least 6 characters');
+      setPasswordError("Password must be at least 6 characters");
       return false;
     }
-    
-    setPasswordError('');
+
+    setPasswordError("");
     return true;
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    
+
     if (validatePasswords()) {
       dispatch(register({ name, email, password }));
     }
@@ -51,11 +51,15 @@ const Register = () => {
 
   return (
     <div className="flex min-h-screen bg-gray-50">
+      {/* left side */}
       <div className="hidden md:flex md:w-1/2 bg-gradient-to-br from-primary-600 to-primary-800 items-center justify-center">
         <div className="max-w-md p-8">
-          <h1 className="text-4xl font-bold text-white mb-6">Join Socials Today</h1>
+          <h1 className="text-4xl font-bold text-white mb-6">
+            Join Socials Today
+          </h1>
           <p className="text-white/80 text-lg mb-8">
-            Create an account to connect with friends, share moments, and discover interesting content.
+            Create an account to connect with friends, share moments, and
+            discover interesting content.
           </p>
           <div className="grid grid-cols-3 gap-4">
             <div className="aspect-square bg-white/10 backdrop-blur-sm rounded-lg p-4 flex flex-col items-center justify-center text-white">
@@ -68,12 +72,12 @@ const Register = () => {
             </div>
             <div className="aspect-square bg-white/10 backdrop-blur-sm rounded-lg p-4 flex flex-col items-center justify-center text-white">
               <Mail size={28} className="mb-2" />
-              <p className="text-sm font-medium">Message</p>
+              <p className="text-sm font-medium pb-5">Message</p>
             </div>
           </div>
         </div>
       </div>
-      
+      {/* right register form */}
       <div className="w-full md:w-1/2 flex items-center justify-center p-8">
         <div className="w-full max-w-md">
           <div className="text-center mb-10">
@@ -81,12 +85,21 @@ const Register = () => {
               <div className="h-10 w-10 rounded-full bg-primary-600 flex items-center justify-center">
                 <span className="text-white font-semibold text-lg">S</span>
               </div>
-              <h1 className="ml-3 text-2xl font-bold text-gray-900">Socials</h1>
+              <Link to="/">
+                <h1 className="ml-3 text-2xl font-bold text-gray-900">
+                  Socials
+                </h1>
+              </Link>
             </div>
-            <h2 className="mt-6 text-3xl font-bold text-gray-900">Create your account</h2>
+            <h2 className="mt-6 text-3xl font-bold text-gray-900">
+              Create your account
+            </h2>
             <p className="mt-2 text-gray-600">
-              Already have an account?{' '}
-              <Link to="/login" className="text-primary-600 hover:text-primary-500 font-medium">
+              Already have an account?{" "}
+              <Link
+                to="/login"
+                className="text-primary-600 hover:text-primary-500 font-medium"
+              >
                 Sign in
               </Link>
             </p>
@@ -100,7 +113,10 @@ const Register = () => {
 
           <form onSubmit={handleSubmit} className="space-y-5">
             <div>
-              <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
+              <label
+                htmlFor="name"
+                className="block text-sm font-medium text-gray-700 mb-1"
+              >
                 Full Name
               </label>
               <div className="relative">
@@ -121,7 +137,10 @@ const Register = () => {
             </div>
 
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+              <label
+                htmlFor="email"
+                className="block text-sm font-medium text-gray-700 mb-1"
+              >
                 Email Address
               </label>
               <div className="relative">
@@ -143,7 +162,10 @@ const Register = () => {
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
+              <label
+                htmlFor="password"
+                className="block text-sm font-medium text-gray-700 mb-1"
+              >
                 Password
               </label>
               <div className="relative">
@@ -154,6 +176,7 @@ const Register = () => {
                   id="password"
                   name="password"
                   type="password"
+                  autoComplete="new-password" 
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
@@ -165,7 +188,10 @@ const Register = () => {
             </div>
 
             <div>
-              <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-1">
+              <label
+                htmlFor="confirmPassword"
+                className="block text-sm font-medium text-gray-700 mb-1"
+              >
                 Confirm Password
               </label>
               <div className="relative">
@@ -176,6 +202,7 @@ const Register = () => {
                   id="confirmPassword"
                   name="confirmPassword"
                   type="password"
+                  autoComplete="new-password" 
                   required
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
@@ -197,12 +224,15 @@ const Register = () => {
                 required
                 className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
               />
-              <label htmlFor="terms" className="ml-2 block text-sm text-gray-700">
-                I agree to the{' '}
+              <label
+                htmlFor="terms"
+                className="ml-2 block text-sm text-gray-700"
+              >
+                I agree to the{" "}
                 <a href="#" className="text-primary-600 hover:text-primary-500">
                   Terms of Service
-                </a>{' '}
-                and{' '}
+                </a>{" "}
+                and{" "}
                 <a href="#" className="text-primary-600 hover:text-primary-500">
                   Privacy Policy
                 </a>
@@ -216,9 +246,25 @@ const Register = () => {
             >
               {loading ? (
                 <span className="inline-flex items-center">
-                  <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  <svg
+                    className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                    ></circle>
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                    ></path>
                   </svg>
                   Creating account...
                 </span>
