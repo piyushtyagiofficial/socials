@@ -212,7 +212,7 @@ const Register = () => {
                 />
               </div>
               {passwordError && (
-                <p className="mt-1 text-sm text-error-500">{passwordError}</p>
+                <p className="mt-1 text-sm text-red-500 text-error-500">{passwordError}</p>
               )}
             </div>
 

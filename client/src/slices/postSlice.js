@@ -14,7 +14,7 @@ export const getFeedPosts = createAsyncThunk(
   'post/getFeedPosts',
   async (_, { rejectWithValue }) => {
     try {
-      const { data } = await axios.get('/posts/feed');
+      const { data } = await axios.get('posts/feed');
       return data;
     } catch (error) {
       return rejectWithValue(
@@ -138,7 +138,10 @@ const postSlice = createSlice({
       })
       .addCase(getFeedPosts.fulfilled, (state, action) => {
         state.loading = false;
-        state.posts = action.payload;
+        const newPosts = action.payload;
+        if (JSON.stringify(state.posts) !== JSON.stringify(newPosts)) {
+          state.posts = newPosts;
+        }
       })
       .addCase(getFeedPosts.rejected, (state, action) => {
         state.loading = false;

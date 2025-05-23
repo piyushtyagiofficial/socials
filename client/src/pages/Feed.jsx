@@ -6,12 +6,20 @@ import Post from '../components/Post';
 import { Bookmark, TrendingUp } from 'lucide-react';
 
 const Feed = () => {
-  const { posts, loading, error } = useSelector(state => state.post);
+  const { posts, profileLoading, error } = useSelector(state => state.post);
+  const { userInfo } = useSelector(state => state.auth);
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(getFeedPosts());
-  }, [dispatch]);
+    if (userInfo) {
+      dispatch(getFeedPosts());
+    }
+  }, [dispatch, userInfo]);
+
+  if (!userInfo) {
+    return null;
+  }
+
 
   return (
     <div className="max-w-2xl mx-auto pb-20">
@@ -19,7 +27,7 @@ const Feed = () => {
       
       <PostForm />
       
-      {loading && posts.length === 0 ? (
+      {profileLoading && posts.length === 0 ? (
         <div className="card p-8 flex flex-col items-center justify-center">
           <div className="w-12 h-12 border-4 border-primary-500 border-t-transparent rounded-full animate-spin"></div>
           <p className="mt-4 text-gray-600">Loading posts...</p>

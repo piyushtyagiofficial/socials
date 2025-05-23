@@ -14,7 +14,7 @@ import Search from './pages/Search';
 import Chat from './pages/Chat';
 
 const App = () => {
-  const { userInfo, loading } = useSelector((state) => state.auth);
+  const { userInfo, profileLoading } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -24,12 +24,13 @@ const App = () => {
   }, [dispatch, userInfo]);
 
   const ProtectedRoute = ({ children }) => {
-    if (loading) return <div className="flex items-center justify-center min-h-screen">Loading...</div>;
-    return userInfo ? children : <Navigate to="/login" />;
+    if (!userInfo) return <Navigate to="/login" />;
+    return children;
   };
 
   const PublicRoute = ({ children }) => {
-    return !userInfo ? children : <Navigate to="/feed" />;
+    if (userInfo) return <Navigate to="/feed" />;
+    return children;
   };
 
   return (

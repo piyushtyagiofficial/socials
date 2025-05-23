@@ -6,9 +6,12 @@ const initialState = {
   userInfo: localStorage.getItem('userInfo')
     ? JSON.parse(localStorage.getItem('userInfo'))
     : null,
-  loading: false,
+  loading: false,          // For login/register
+  profileLoading: false,   // For getUserProfile
+  updateLoading: false,    // For updateUserProfile
   error: null,
 };
+
 
 export const login = createAsyncThunk(
   'auth/login',
@@ -95,8 +98,10 @@ const authSlice = createSlice({
   initialState,
   reducers: {
     resetAuthState: (state) => {
-      state.loading = false;
-      state.error = null;
+       state.loading = false;
+       state.profileLoading = false;
+       state.updateLoading = false;
+       state.error = null;
     },
   },
   extraReducers: (builder) => {
@@ -134,26 +139,26 @@ const authSlice = createSlice({
         toast.success('Logged out successfully');
       })
       .addCase(getUserProfile.pending, (state) => {
-        state.loading = true;
+        state.profileLoading = true;
       })
       .addCase(getUserProfile.fulfilled, (state, action) => {
-        state.loading = false;
+        state.profileLoading = false;
         state.userInfo = { ...state.userInfo, ...action.payload };
       })
       .addCase(getUserProfile.rejected, (state, action) => {
-        state.loading = false;
+        state.profileLoading = false;
         state.error = action.payload;
       })
       .addCase(updateUserProfile.pending, (state) => {
-        state.loading = true;
+        state.updateLoading = true;
       })
       .addCase(updateUserProfile.fulfilled, (state, action) => {
-        state.loading = false;
+        state.updateLoading = false;
         state.userInfo = action.payload;
         toast.success('Profile updated successfully');
       })
       .addCase(updateUserProfile.rejected, (state, action) => {
-        state.loading = false;
+        state.updateLoading = false;
         state.error = action.payload;
         toast.error(action.payload);
       });
