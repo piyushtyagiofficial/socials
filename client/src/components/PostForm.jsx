@@ -119,6 +119,7 @@ const PostForm = () => {
           
           <input
             id="image-url-input"
+            name="image-url-input"
             type="text"
             className="hidden"
             placeholder="Enter image URL"

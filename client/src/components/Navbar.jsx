@@ -34,6 +34,8 @@ const Navbar = () => {
             <form onSubmit={handleSearch} className="relative mr-2 sm:mr-4">
               <div className="relative">
                 <input
+                  id='search'
+                  name='search'
                   type="text"
                   placeholder="Search users..."
                   value={searchQuery}

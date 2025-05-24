@@ -119,6 +119,8 @@ const Post = ({ post, isDetailView = false }) => {
               )}
             </div>
             <input
+              id="comment"
+              name="comment"
               type="text"
               className="flex-1 bg-white border border-gray-200 rounded-full px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
               placeholder="Write a comment..."
