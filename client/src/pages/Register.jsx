@@ -1,285 +1,246 @@
-import React, { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import { register, resetAuthState } from "../slices/authSlice";
-import { UserPlus, Mail, Lock, User } from "lucide-react";
+import { useState } from "react"
+import { Link, useNavigate } from "react-router-dom"
+import { useAuth } from "../contexts/AuthContext"
+import { Eye, EyeOff, Mail, Lock, User } from "lucide-react"
+import LoadingSpinner from "../components/UI/LoadingSpinner"
 
 const Register = () => {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [passwordError, setPasswordError] = useState("");
+  const [formData, setFormData] = useState({
+    username: "",
+    email: "",
+    password: "",
+    fullName: "",
+    confirmPassword: "",
+  })
+  const [showPassword, setShowPassword] = useState(false)
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
+  const [errors, setErrors] = useState({})
 
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
+  const { register } = useAuth()
+  const navigate = useNavigate()
 
-  const { userInfo, loading, error } = useSelector((state) => state.auth);
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    })
+    // Clear error when user starts typing
+    if (errors[e.target.name]) {
+      setErrors({
+        ...errors,
+        [e.target.name]: "",
+      })
+    }
+  }
 
-  useEffect(() => {
-    if (userInfo) {
-      navigate("/feed");
+  const validateForm = () => {
+    const newErrors = {}
+
+    if (formData.username.length < 3) {
+      newErrors.username = "Username must be at least 3 characters"
     }
 
-    return () => {
-      dispatch(resetAuthState());
-    };
-  }, [userInfo, navigate, dispatch]);
-
-  const validatePasswords = () => {
-    if (password !== confirmPassword) {
-      setPasswordError("Passwords do not match");
-      return false;
+    if (formData.fullName.length < 2) {
+      newErrors.fullName = "Full name must be at least 2 characters"
     }
 
-    if (password.length < 6) {
-      setPasswordError("Password must be at least 6 characters");
-      return false;
+    if (formData.password.length < 6) {
+      newErrors.password = "Password must be at least 6 characters"
     }
 
-    setPasswordError("");
-    return true;
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-
-    if (validatePasswords()) {
-      dispatch(register({ name, email, password }));
+    if (formData.password !== formData.confirmPassword) {
+      newErrors.confirmPassword = "Passwords do not match"
     }
-  };
+
+    setErrors(newErrors)
+    return Object.keys(newErrors).length === 0
+  }
+
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+
+    if (!validateForm()) {
+      return
+    }
+
+    setIsLoading(true)
+
+    const { confirmPassword, ...userData } = formData
+    const result = await register(userData)
+
+    if (result.success) {
+      navigate("/home")
+    }
+
+    setIsLoading(false)
+  }
 
   return (
-    <div className="flex min-h-screen bg-gray-50">
-      {/* left side */}
-      <div className="hidden md:flex md:w-1/2 bg-gradient-to-br from-primary-600 to-primary-800 items-center justify-center">
-        <div className="max-w-md p-8">
-          <h1 className="text-4xl font-bold text-white mb-6">
-            Join Socials Today
-          </h1>
-          <p className="text-white/80 text-lg mb-8">
-            Create an account to connect with friends, share moments, and
-            discover interesting content.
-          </p>
-          <div className="grid grid-cols-3 gap-4">
-            <div className="aspect-square bg-white/10 backdrop-blur-sm rounded-lg p-4 flex flex-col items-center justify-center text-white">
-              <User size={28} className="mb-2" />
-              <p className="text-sm font-medium">Create Profile</p>
-            </div>
-            <div className="aspect-square bg-white/10 backdrop-blur-sm rounded-lg p-4 flex flex-col items-center justify-center text-white">
-              <UserPlus size={28} className="mb-2" />
-              <p className="text-sm font-medium">Follow Friends</p>
-            </div>
-            <div className="aspect-square bg-white/10 backdrop-blur-sm rounded-lg p-4 flex flex-col items-center justify-center text-white">
-              <Mail size={28} className="mb-2" />
-              <p className="text-sm font-medium pb-5">Message</p>
-            </div>
-          </div>
+    <div className="min-h-screen bg-gradient-to-br from-purple-600 via-pink-600 to-blue-600 flex items-center justify-center p-4">
+      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-8">
+        {/* Header */}
+        <div className="text-center mb-8">
+          <Link
+            to="/"
+            className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent"
+          >
+            Socials
+          </Link>
+          <h2 className="text-2xl font-semibold text-gray-800 mt-4">Create Account</h2>
+          <p className="text-gray-600 mt-2">Join the community today</p>
         </div>
-      </div>
-      {/* right register form */}
-      <div className="w-full md:w-1/2 flex items-center justify-center p-8">
-        <div className="w-full max-w-md">
-          <div className="text-center mb-10">
-            <div className="inline-flex items-center justify-center">
-              <div className="h-10 w-10 rounded-full bg-primary-600 flex items-center justify-center">
-                <span className="text-white font-semibold text-lg">S</span>
-              </div>
-              <Link to="/">
-                <h1 className="ml-3 text-2xl font-bold text-gray-900">
-                  Socials
-                </h1>
-              </Link>
+
+        {/* Form */}
+        <form onSubmit={handleSubmit} className="space-y-4">
+          {/* Full Name Field */}
+          <div>
+            <label htmlFor="fullName" className="block text-sm font-medium text-gray-700 mb-1">
+              Full Name
+            </label>
+            <div className="relative">
+              <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+              <input
+                type="text"
+                id="fullName"
+                name="fullName"
+                value={formData.fullName}
+                onChange={handleChange}
+                required
+                className={`w-full pl-10 pr-4 py-3 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all ${
+                  errors.fullName ? "border-red-500" : "border-gray-300"
+                }`}
+                placeholder="Enter your full name"
+              />
             </div>
-            <h2 className="mt-6 text-3xl font-bold text-gray-900">
-              Create your account
-            </h2>
-            <p className="mt-2 text-gray-600">
-              Already have an account?{" "}
-              <Link
-                to="/login"
-                className="text-primary-600 hover:text-primary-500 font-medium"
-              >
-                Sign in
-              </Link>
-            </p>
+            {errors.fullName && <p className="text-red-500 text-sm mt-1">{errors.fullName}</p>}
           </div>
 
-          {error && (
-            <div className="mb-4 p-3 bg-error-50 border border-error-200 text-error-500 rounded-lg">
-              {error}
-            </div>
-          )}
-
-          <form onSubmit={handleSubmit} className="space-y-5">
-            <div>
-              <label
-                htmlFor="name"
-                className="block text-sm font-medium text-gray-700 mb-1"
-              >
-                Full Name
-              </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <User size={18} className="text-gray-400" />
-                </div>
-                <input
-                  id="name"
-                  name="name"
-                  type="text"
-                  required
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  className="input pl-10"
-                  placeholder="Your full name"
-                />
-              </div>
-            </div>
-
-            <div>
-              <label
-                htmlFor="email"
-                className="block text-sm font-medium text-gray-700 mb-1"
-              >
-                Email Address
-              </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Mail size={18} className="text-gray-400" />
-                </div>
-                <input
-                  id="email"
-                  name="email"
-                  type="email"
-                  autoComplete="email"
-                  required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="input pl-10"
-                  placeholder="Your email address"
-                />
-              </div>
-            </div>
-
-            <div>
-              <label
-                htmlFor="password"
-                className="block text-sm font-medium text-gray-700 mb-1"
-              >
-                Password
-              </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Lock size={18} className="text-gray-400" />
-                </div>
-                <input
-                  id="password"
-                  name="password"
-                  type="password"
-                  autoComplete="new-password" 
-                  required
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  onBlur={validatePasswords}
-                  className="input pl-10"
-                  placeholder="Create a password"
-                />
-              </div>
-            </div>
-
-            <div>
-              <label
-                htmlFor="confirmPassword"
-                className="block text-sm font-medium text-gray-700 mb-1"
-              >
-                Confirm Password
-              </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Lock size={18} className="text-gray-400" />
-                </div>
-                <input
-                  id="confirmPassword"
-                  name="confirmPassword"
-                  type="password"
-                  autoComplete="new-password" 
-                  required
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  onBlur={validatePasswords}
-                  className="input pl-10"
-                  placeholder="Confirm your password"
-                />
-              </div>
-              {passwordError && (
-                <p className="mt-1 text-sm text-red-500 text-error-500">{passwordError}</p>
-              )}
-            </div>
-
-            <div className="flex items-center">
+          {/* Username Field */}
+          <div>
+            <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-1">
+              Username
+            </label>
+            <div className="relative">
+              <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
               <input
-                id="terms"
-                name="terms"
-                type="checkbox"
+                type="text"
+                id="username"
+                name="username"
+                value={formData.username}
+                onChange={handleChange}
                 required
-                className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
+                className={`w-full pl-10 pr-4 py-3 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all ${
+                  errors.username ? "border-red-500" : "border-gray-300"
+                }`}
+                placeholder="Choose a username"
               />
-              <label
-                htmlFor="terms"
-                className="ml-2 block text-sm text-gray-700"
-              >
-                I agree to the{" "}
-                <a href="#" className="text-primary-600 hover:text-primary-500">
-                  Terms of Service
-                </a>{" "}
-                and{" "}
-                <a href="#" className="text-primary-600 hover:text-primary-500">
-                  Privacy Policy
-                </a>
-              </label>
             </div>
+            {errors.username && <p className="text-red-500 text-sm mt-1">{errors.username}</p>}
+          </div>
 
-            <button
-              type="submit"
-              disabled={loading}
-              className="btn-primary w-full py-3 flex items-center justify-center"
-            >
-              {loading ? (
-                <span className="inline-flex items-center">
-                  <svg
-                    className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                  >
-                    <circle
-                      className="opacity-25"
-                      cx="12"
-                      cy="12"
-                      r="10"
-                      stroke="currentColor"
-                      strokeWidth="4"
-                    ></circle>
-                    <path
-                      className="opacity-75"
-                      fill="currentColor"
-                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                    ></path>
-                  </svg>
-                  Creating account...
-                </span>
-              ) : (
-                <span className="inline-flex items-center">
-                  <UserPlus size={18} className="mr-2" />
-                  Create Account
-                </span>
-              )}
-            </button>
-          </form>
+          {/* Email Field */}
+          <div>
+            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+              Email Address
+            </label>
+            <div className="relative">
+              <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+              <input
+                type="email"
+                id="email"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+                required
+                className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                placeholder="Enter your email"
+              />
+            </div>
+          </div>
+
+          {/* Password Field */}
+          <div>
+            <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
+              Password
+            </label>
+            <div className="relative">
+              <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+              <input
+                type={showPassword ? "text" : "password"}
+                id="password"
+                name="password"
+                value={formData.password}
+                onChange={handleChange}
+                required
+                className={`w-full pl-10 pr-12 py-3 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all ${
+                  errors.password ? "border-red-500" : "border-gray-300"
+                }`}
+                placeholder="Create a password"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+              >
+                {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+              </button>
+            </div>
+            {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password}</p>}
+          </div>
+
+          {/* Confirm Password Field */}
+          <div>
+            <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-1">
+              Confirm Password
+            </label>
+            <div className="relative">
+              <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+              <input
+                type={showConfirmPassword ? "text" : "password"}
+                id="confirmPassword"
+                name="confirmPassword"
+                value={formData.confirmPassword}
+                onChange={handleChange}
+                required
+                className={`w-full pl-10 pr-12 py-3 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all ${
+                  errors.confirmPassword ? "border-red-500" : "border-gray-300"
+                }`}
+                placeholder="Confirm your password"
+              />
+              <button
+                type="button"
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+              >
+                {showConfirmPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+              </button>
+            </div>
+            {errors.confirmPassword && <p className="text-red-500 text-sm mt-1">{errors.confirmPassword}</p>}
+          </div>
+
+          {/* Submit Button */}
+          <button
+            type="submit"
+            disabled={isLoading}
+            className="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white py-3 rounded-lg font-semibold hover:from-purple-700 hover:to-pink-700 transition-all transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center mt-6"
+          >
+            {isLoading ? <LoadingSpinner size="sm" /> : "Create Account"}
+          </button>
+        </form>
+
+        {/* Footer */}
+        <div className="mt-6 text-center">
+          <p className="text-gray-600">
+            Already have an account?{" "}
+            <Link to="/login" className="text-purple-600 hover:text-purple-700 font-semibold transition-colors">
+              Sign in
+            </Link>
+          </p>
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default Register;
+export default Register
