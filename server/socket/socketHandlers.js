@@ -1,5 +1,5 @@
-const Chat = require("../models/Chat")
-const User = require("../models/User")
+const Chat = require("../models/chatModel")
+const User = require("../models/userModel")
 const jwt = require("jsonwebtoken")
 
 const socketHandler = (io) => {
