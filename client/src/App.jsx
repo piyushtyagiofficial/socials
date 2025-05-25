@@ -1,109 +1,155 @@
-import React, { useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { useSelector, useDispatch } from 'react-redux';
-import { getUserProfile } from './slices/authSlice';
-import Layout from './components/Layout';
-import Landing from './pages/Landing';
-import Login from './pages/Login';
-import Register from './pages/Register';
-import Feed from './pages/Feed';
-import Profile from './pages/Profile';
-import EditProfile from './pages/EditProfile';
-import PostDetail from './pages/PostDetail';
-import Search from './pages/Search';
-import Chat from './pages/Chat';
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom"
+import { Toaster } from "react-hot-toast"
+import { AuthProvider } from "./contexts/AuthContext"
+import { SocketProvider } from "./contexts/SocketContext"
+import { useAuth } from "./contexts/AuthContext"
 
-const App = () => {
-  const { userInfo, profileLoading } = useSelector((state) => state.auth);
-  const dispatch = useDispatch();
+// Components
+import Landing from "./pages/Landing"
+import Login from "./pages/Login"
+import Register from "./pages/Register"
+import Home from "./pages/Home"
+import Profile from "./pages/Profile"
+import Chat from "./pages/Chat"
+import PostDetail from "./pages/PostDetail"
+import Search from "./pages/Search"
+import Layout from "./components/Layout/Layout"
+import LoadingSpinner from "./components/UI/LoadingSpinner"
 
-  useEffect(() => {
-    if (userInfo) {
-      dispatch(getUserProfile());
-    }
-  }, [dispatch, userInfo]);
+// Protected Route Component
+const ProtectedRoute = ({ children }) => {
+  const { user, loading } = useAuth()
 
-  const ProtectedRoute = ({ children }) => {
-    if (!userInfo) return <Navigate to="/login" />;
-    return children;
-  };
+  if (loading) {
+    return <LoadingSpinner />
+  }
 
-  const PublicRoute = ({ children }) => {
-    if (userInfo) return <Navigate to="/feed" />;
-    return children;
-  };
+  return user ? children : <Navigate to="/login" />
+}
+
+// Public Route Component (redirect if authenticated)
+const PublicRoute = ({ children }) => {
+  const { user, loading } = useAuth()
+
+  if (loading) {
+    return <LoadingSpinner />
+  }
+
+  return !user ? children : <Navigate to="/home" />
+}
+
+function AppContent() {
+  const { user } = useAuth()
 
   return (
-    <Router>
+    <div className="min-h-screen bg-gray-50">
       <Routes>
-        <Route path="/" element={
-          <PublicRoute>
-            <Landing />
-          </PublicRoute>
-        } />
-        <Route path="/login" element={
-          <PublicRoute>
-            <Login />
-          </PublicRoute>
-        } />
-        <Route path="/register" element={
-          <PublicRoute>
-            <Register />
-          </PublicRoute>
-        } />
-        <Route path="/feed" element={
-          <ProtectedRoute>
-            <Layout>
-              <Feed />
-            </Layout>
-          </ProtectedRoute>
-        } />
-        <Route path="/profile/:id" element={
-          <ProtectedRoute>
-            <Layout>
-              <Profile />
-            </Layout>
-          </ProtectedRoute>
-        } />
-        <Route path="/profile/edit" element={
-          <ProtectedRoute>
-            <Layout>
-              <EditProfile />
-            </Layout>
-          </ProtectedRoute>
-        } />
-        <Route path="/post/:id" element={
-          <ProtectedRoute>
-            <Layout>
-              <PostDetail />
-            </Layout>
-          </ProtectedRoute>
-        } />
-        <Route path="/search" element={
-          <ProtectedRoute>
-            <Layout>
-              <Search />
-            </Layout>
-          </ProtectedRoute>
-        } />
-        <Route path="/chat" element={
-          <ProtectedRoute>
-            <Layout>
-              <Chat />
-            </Layout>
-          </ProtectedRoute>
-        } />
-        <Route path="/chat/:id" element={
-          <ProtectedRoute>
-            <Layout>
-              <Chat />
-            </Layout>
-          </ProtectedRoute>
-        } />
-        <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
-    </Router>
-  );
-};
+        {/* Public Routes */}
+        <Route
+          path="/"
+          element={
+            <PublicRoute>
+              <Landing />
+            </PublicRoute>
+          }
+        />
+        <Route
+          path="/login"
+          element={
+            <PublicRoute>
+              <Login />
+            </PublicRoute>
+          }
+        />
+        <Route
+          path="/register"
+          element={
+            <PublicRoute>
+              <Register />
+            </PublicRoute>
+          }
+        />
 
-export default App;
+        {/* Protected Routes */}
+        <Route
+          path="/home"
+          element={
+            <ProtectedRoute>
+              <Layout>
+                <Home />
+              </Layout>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/profile/:username"
+          element={
+            <ProtectedRoute>
+              <Layout>
+                <Profile />
+              </Layout>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/search"
+          element={
+            <ProtectedRoute>
+              <Layout>
+                <Search />
+              </Layout>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/chat"
+          element={
+            <ProtectedRoute>
+              <Layout>
+                <Chat />
+              </Layout>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/chat/:chatId"
+          element={
+            <ProtectedRoute>
+              <Layout>
+                <Chat />
+              </Layout>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/post/:postId"
+          element={
+            <ProtectedRoute>
+              <Layout>
+                <PostDetail />
+              </Layout>
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Catch all route */}
+        <Route path="*" element={user ? <Navigate to="/home" /> : <Navigate to="/" />} />
+      </Routes>
+      <Toaster position="top-right" />
+    </div>
+  )
+}
+
+function App() {
+  return (
+    <Router>
+      <AuthProvider>
+        <SocketProvider>
+          <AppContent />
+        </SocketProvider>
+      </AuthProvider>
+    </Router>
+  )
+}
+
+export default App
