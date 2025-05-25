@@ -1,87 +1,76 @@
-import React, { useEffect } from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
-import { getPostById, deletePost } from '../slices/postSlice';
-import Post from '../components/Post';
-import { ArrowLeft, Trash2 } from 'lucide-react';
+"use client"
+
+import { useState, useEffect } from "react"
+import { useParams, useNavigate } from "react-router-dom"
+import { postsAPI } from "../services/api"
+import PostCard from "../components/Posts/PostCard"
+import LoadingSpinner from "../components/UI/LoadingSpinner"
+import { ArrowLeft } from "lucide-react"
+import toast from "react-hot-toast"
 
 const PostDetail = () => {
-  const { id } = useParams();
-  const navigate = useNavigate();
-  const dispatch = useDispatch();
-  
-  const { post, loading, error } = useSelector(state => state.post);
-  const { userInfo } = useSelector(state => state.auth);
-  
+  const { postId } = useParams()
+  const navigate = useNavigate()
+  const [post, setPost] = useState(null)
+  const [loading, setLoading] = useState(true)
+
   useEffect(() => {
-    dispatch(getPostById(id));
-  }, [dispatch, id]);
-  
-  const handleDeletePost = () => {
-    if (window.confirm('Are you sure you want to delete this post?')) {
-      dispatch(deletePost(id)).then(() => {
-        navigate('/feed');
-      });
+    fetchPost()
+  }, [postId])
+
+  const fetchPost = async () => {
+    try {
+      setLoading(true)
+      const response = await postsAPI.getPost(postId)
+      setPost(response.data.post)
+    } catch (error) {
+      toast.error("Failed to load post")
+      navigate("/home")
+    } finally {
+      setLoading(false)
     }
-  };
-  
-  if (loading && !post) {
-    return (
-      <div className="flex justify-center items-center h-64">
-        <div className="w-12 h-12 border-4 border-primary-500 border-t-transparent rounded-full animate-spin"></div>
-      </div>
-    );
   }
-  
-  if (error) {
-    return (
-      <div className="card p-6 text-error-500">
-        <p>{error}</p>
-        <Link to="/feed" className="text-primary-600 mt-4 inline-block">
-          Back to feed
-        </Link>
-      </div>
-    );
+
+  const handlePostUpdate = (updatedPost) => {
+    setPost(updatedPost)
   }
-  
+
+  const handlePostDelete = () => {
+    navigate("/home")
+  }
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center min-h-96">
+        <LoadingSpinner size="lg" />
+      </div>
+    )
+  }
+
   if (!post) {
     return (
-      <div className="text-center p-8">
-        <h2 className="text-xl font-semibold text-gray-800">Post not found</h2>
-        <Link to="/feed" className="text-primary-600 mt-2 inline-block">
-          Back to feed
-        </Link>
+      <div className="text-center py-12">
+        <h3 className="text-lg font-medium text-gray-900 mb-2">Post not found</h3>
+        <p className="text-gray-500">The post you're looking for doesn't exist or has been deleted.</p>
       </div>
-    );
+    )
   }
-  
-  const isOwnPost = userInfo._id === post.user._id;
-  
-  return (
-    <div className="max-w-2xl mx-auto pb-20">
-      <div className="flex items-center justify-between mb-6">
-        <button
-          onClick={() => navigate(-1)}
-          className="flex items-center text-gray-600 hover:text-gray-900"
-        >
-          <ArrowLeft size={20} className="mr-2" />
-          <span>Back</span>
-        </button>
-        
-        {isOwnPost && (
-          <button
-            onClick={handleDeletePost}
-            className="flex items-center text-error-500 hover:text-error-700"
-          >
-            <Trash2 size={18} className="mr-2" />
-            <span>Delete</span>
-          </button>
-        )}
-      </div>
-      
-      {post && <Post post={post} isDetailView={true} />}
-    </div>
-  );
-};
 
-export default PostDetail;
+  return (
+    <div className="max-w-2xl mx-auto">
+      {/* Back Button */}
+      <button
+        onClick={() => navigate(-1)}
+        className="flex items-center space-x-2 text-gray-600 hover:text-gray-800 transition-colors mb-6"
+      >
+        <ArrowLeft className="w-5 h-5" />
+        <span>Back</span>
+      </button>
+
+      {/* Post */}
+      <PostCard post={post} onUpdate={handlePostUpdate} onDelete={handlePostDelete} />
+    </div>
+  )
+}
+
+export default PostDetail
