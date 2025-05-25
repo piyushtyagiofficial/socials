@@ -49,7 +49,7 @@ const Landing = () => {
           </Link>
         </div>
 
-        {/* Features Grid */}
+        {/* Features Grid - Fixed for better readability */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl w-full">
           {[
             {
@@ -75,21 +75,23 @@ const Landing = () => {
           ].map((feature, index) => (
             <div
               key={feature.title}
-              className="glass rounded-2xl p-6 text-center animate-slide-up hover:scale-105 transition-all duration-300"
+              className="bg-white/20 backdrop-blur-sm border border-white/30 rounded-2xl p-6 text-center animate-slide-up hover:scale-105 hover:bg-white/25 transition-all duration-300 shadow-lg"
               style={{ animationDelay: `${index * 100}ms` }}
             >
-              <div className="bg-white/20 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-                <feature.icon className="w-8 h-8 text-white" />
+              <div className="bg-white/30 backdrop-blur-sm rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4 shadow-inner-soft">
+                <feature.icon className="w-8 h-8 text-white drop-shadow-sm" />
               </div>
-              <h3 className="text-white font-semibold text-lg mb-2">{feature.title}</h3>
-              <p className="text-white/80 text-sm text-balance">{feature.description}</p>
+              <h3 className="text-white font-bold text-lg mb-3 drop-shadow-sm">{feature.title}</h3>
+              <p className="text-white/95 text-sm text-balance leading-relaxed drop-shadow-sm font-medium">
+                {feature.description}
+              </p>
             </div>
           ))}
         </div>
       </div>
 
-      {/* Stats Section */}
-      <div className="glass mx-6 md:mx-8 rounded-3xl p-8 mb-12 animate-slide-up">
+      {/* Stats Section - Also improved for better readability */}
+      <div className="bg-white/20 backdrop-blur-sm border border-white/30 mx-6 md:mx-8 rounded-3xl p-8 mb-12 animate-slide-up shadow-lg">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
           {[
             { number: "1M+", label: "Active Users" },
@@ -97,20 +99,19 @@ const Landing = () => {
             { number: "50M+", label: "Connections Made" },
           ].map((stat, index) => (
             <div key={stat.label} className="animate-scale-in" style={{ animationDelay: `${index * 200}ms` }}>
-              <div className="text-4xl md:text-5xl font-bold text-white mb-2">{stat.number}</div>
-              <div className="text-white/80 text-lg">{stat.label}</div>
+              <div className="text-4xl md:text-5xl font-bold text-white mb-2 drop-shadow-sm">{stat.number}</div>
+              <div className="text-white/95 text-lg font-medium drop-shadow-sm">{stat.label}</div>
             </div>
           ))}
         </div>
       </div>
 
       {/* Footer */}
-      <footer className="text-center text-white/60 pb-8 safe-bottom">
-        <p>&copy; 2024 Socials. All rights reserved.</p>
+      <footer className="text-center text-white/70 pb-8 safe-bottom">
+        <p className="drop-shadow-sm">&copy; 2025 Socials. All rights reserved.</p>
       </footer>
     </div>
   )
 }
 
 export default Landing
-// 

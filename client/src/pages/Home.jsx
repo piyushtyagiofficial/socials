@@ -5,7 +5,7 @@ import CreatePost from "../components/Posts/CreatePost"
 import LoadingSpinner from "../components/UI/LoadingSpinner"
 import toast from "react-hot-toast"
 
-const HomePage = () => {
+const Home = () => {
   const [posts, setPosts] = useState([])
   const [loading, setLoading] = useState(true)
   const [hasMore, setHasMore] = useState(true)
