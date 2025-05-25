@@ -1,48 +1,69 @@
-import mongoose from 'mongoose';
+const mongoose = require("mongoose")
 
-const commentSchema = mongoose.Schema(
+const postSchema = new mongoose.Schema(
   {
-    user: {
+    author: {
       type: mongoose.Schema.Types.ObjectId,
-      required: true,
-      ref: 'User',
-    },
-    text: {
-      type: String,
+      ref: "User",
       required: true,
     },
-  },
-  {
-    timestamps: true,
-  }
-);
-
-const postSchema = mongoose.Schema(
-  {
-    user: {
-      type: mongoose.Schema.Types.ObjectId,
-      required: true,
-      ref: 'User',
-    },
-    image: {
+    content: {
       type: String,
+      maxlength: 2200,
     },
-    text: {
-      type: String,
-    },
-    likes: [
+    images: [
       {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
+        type: String,
       },
     ],
-    comments: [commentSchema],
+    likes: [
+      {
+        user: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "User",
+        },
+        createdAt: {
+          type: Date,
+          default: Date.now,
+        },
+      },
+    ],
+    comments: [
+      {
+        user: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "User",
+          required: true,
+        },
+        text: {
+          type: String,
+          required: true,
+          maxlength: 500,
+        },
+        createdAt: {
+          type: Date,
+          default: Date.now,
+        },
+      },
+    ],
+    location: {
+      type: String,
+      maxlength: 100,
+    },
   },
   {
     timestamps: true,
-  }
-);
+  },
+)
 
-const Post = mongoose.model('Post', postSchema);
+// Virtual for like count
+postSchema.virtual("likesCount").get(function () {
+  return this.likes.length
+})
 
-export default Post;
+// Virtual for comments count
+postSchema.virtual("commentsCount").get(function () {
+  return this.comments.length
+})
+
+module.exports = mongoose.model("Post", postSchema)
