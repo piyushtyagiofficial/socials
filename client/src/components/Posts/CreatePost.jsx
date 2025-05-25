@@ -87,140 +87,139 @@ const CreatePost = ({ onPostCreated }) => {
   }
 
   return (
-    <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
-      {!showForm ? (
-        <div className="flex items-center space-x-3">
-          {user?.profilePicture ? (
-            <img
-              src={user.profilePicture || "/placeholder.svg"}
-              alt={user.username}
-              className="w-10 h-10 rounded-full object-cover"
-            />
-          ) : (
-            <div className="w-10 h-10 bg-purple-600 rounded-full flex items-center justify-center">
-              <User className="w-6 h-6 text-white" />
-            </div>
-          )}
-          <button
-            onClick={() => setShowForm(true)}
-            className="flex-1 text-left px-4 py-3 bg-gray-100 rounded-full text-gray-500 hover:bg-gray-200 transition-colors"
-          >
-            What's on your mind, {user?.fullName?.split(" ")[0]}?
-          </button>
-        </div>
-      ) : (
-        <form onSubmit={handleSubmit} className="space-y-4">
-          {/* User Info */}
+    <div className="card shadow-soft-lg">
+      <div className="p-4">
+        {!showForm ? (
           <div className="flex items-center space-x-3">
             {user?.profilePicture ? (
               <img
                 src={user.profilePicture || "/placeholder.svg"}
                 alt={user.username}
-                className="w-10 h-10 rounded-full object-cover"
+                className="w-10 h-10 rounded-full object-cover ring-2 ring-transparent hover:ring-primary-200 transition-all duration-200"
               />
             ) : (
-              <div className="w-10 h-10 bg-purple-600 rounded-full flex items-center justify-center">
+              <div className="w-10 h-10 bg-primary-600 rounded-full flex items-center justify-center ring-2 ring-transparent hover:ring-primary-200 transition-all duration-200">
                 <User className="w-6 h-6 text-white" />
               </div>
             )}
-            <div>
-              <p className="font-semibold text-gray-900">{user?.fullName}</p>
-              <p className="text-sm text-gray-500">@{user?.username}</p>
-            </div>
+            <button
+              onClick={() => setShowForm(true)}
+              className="flex-1 text-left px-4 py-3 bg-gray-100 rounded-full text-gray-500 hover:bg-gray-200 transition-colors duration-200 focus:ring-2 focus:ring-primary-500 focus:outline-none"
+            >
+              What's on your mind, {user?.fullName?.split(" ")[0]}?
+            </button>
           </div>
-
-          {/* Content Textarea */}
-          <textarea
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
-            placeholder="What's happening?"
-            className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent resize-none"
-            rows={3}
-            maxLength={2200}
-          />
-
-          {/* Location Input */}
-          <div className="relative">
-            <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-            <input
-              type="text"
-              value={location}
-              onChange={(e) => setLocation(e.target.value)}
-              placeholder="Add location (optional)"
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-              maxLength={100}
-            />
-          </div>
-
-          {/* Selected Images */}
-          {selectedImages.length > 0 && (
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-              {selectedImages.map((image, index) => (
-                <div key={index} className="relative">
-                  <img
-                    src={image.preview || "/placeholder.svg"}
-                    alt={`Selected ${index + 1}`}
-                    className="w-full h-32 object-cover rounded-lg"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => removeImage(index)}
-                    className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 transition-colors"
-                  >
-                    <X className="w-4 h-4" />
-                  </button>
+        ) : (
+          <form onSubmit={handleSubmit} className="space-y-4">
+            {/* User Info */}
+            <div className="flex items-center space-x-3">
+              {user?.profilePicture ? (
+                <img
+                  src={user.profilePicture || "/placeholder.svg"}
+                  alt={user.username}
+                  className="w-10 h-10 rounded-full object-cover"
+                />
+              ) : (
+                <div className="w-10 h-10 bg-primary-600 rounded-full flex items-center justify-center">
+                  <User className="w-6 h-6 text-white" />
                 </div>
-              ))}
+              )}
+              <div>
+                <p className="font-semibold text-gray-900">{user?.fullName}</p>
+                <p className="text-sm text-gray-500">@{user?.username}</p>
+              </div>
             </div>
-          )}
 
-          {/* Actions */}
-          <div className="flex items-center justify-between pt-3 border-t border-gray-200">
-            <div className="flex items-center space-x-4">
-              <button
-                type="button"
-                onClick={() => fileInputRef.current?.click()}
-                className="flex items-center space-x-2 text-purple-600 hover:text-purple-700 transition-colors"
-              >
-                <Camera className="w-5 h-5" />
-                <span className="text-sm font-medium">Photo</span>
-              </button>
+            {/* Content Textarea */}
+            <textarea
+              value={content}
+              onChange={(e) => setContent(e.target.value)}
+              placeholder="What's happening?"
+              className="input-primary resize-none"
+              rows={3}
+              maxLength={2200}
+              autoFocus
+            />
+
+            {/* Location Input */}
+            <div className="relative">
+              <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
               <input
-                ref={fileInputRef}
-                type="file"
-                accept="image/*"
-                multiple
-                onChange={handleImageSelect}
-                className="hidden"
+                type="text"
+                value={location}
+                onChange={(e) => setLocation(e.target.value)}
+                placeholder="Add location (optional)"
+                className="input-primary pl-10"
+                maxLength={100}
               />
             </div>
 
-            <div className="flex items-center space-x-3">
-              <button
-                type="button"
-                onClick={handleCancel}
-                className="px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors"
-              >
-                Cancel
-              </button>
-              <button
-                type="submit"
-                disabled={isPosting || (!content.trim() && selectedImages.length === 0)}
-                className="px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2"
-              >
-                {isPosting ? (
-                  <>
-                    <LoadingSpinner size="sm" />
-                    <span>Posting...</span>
-                  </>
-                ) : (
-                  <span>Post</span>
-                )}
-              </button>
+            {/* Selected Images */}
+            {selectedImages.length > 0 && (
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+                {selectedImages.map((image, index) => (
+                  <div key={index} className="relative group">
+                    <img
+                      src={image.preview || "/placeholder.svg"}
+                      alt={`Selected ${index + 1}`}
+                      className="w-full h-32 object-cover rounded-lg"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => removeImage(index)}
+                      className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 transition-colors opacity-0 group-hover:opacity-100"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* Actions */}
+            <div className="flex items-center justify-between pt-3 border-t border-gray-200">
+              <div className="flex items-center space-x-4">
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  className="flex items-center space-x-2 text-primary-600 hover:text-primary-700 transition-colors duration-200"
+                >
+                  <Camera className="w-5 h-5" />
+                  <span className="text-sm font-medium">Photo</span>
+                </button>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  multiple
+                  onChange={handleImageSelect}
+                  className="hidden"
+                />
+              </div>
+
+              <div className="flex items-center space-x-3">
+                <button type="button" onClick={handleCancel} className="btn-ghost">
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={isPosting || (!content.trim() && selectedImages.length === 0)}
+                  className="btn-primary flex items-center space-x-2"
+                >
+                  {isPosting ? (
+                    <>
+                      <LoadingSpinner size="sm" />
+                      <span>Posting...</span>
+                    </>
+                  ) : (
+                    <span>Post</span>
+                  )}
+                </button>
+              </div>
             </div>
-          </div>
-        </form>
-      )}
+          </form>
+        )}
+      </div>
     </div>
   )
 }

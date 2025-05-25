@@ -18,7 +18,7 @@ const Sidebar = () => {
   ]
 
   return (
-    <div className="hidden lg:flex lg:flex-col lg:w-64 lg:fixed lg:inset-y-0 lg:pt-16 lg:bg-white lg:border-r lg:border-gray-200">
+    <div className="hidden lg:flex lg:flex-col lg:w-64 lg:fixed lg:inset-y-0 lg:top-16 lg:bg-white lg:border-r lg:border-gray-200">
       <div className="flex-1 flex flex-col min-h-0 pt-6">
         <nav className="flex-1 px-4 space-y-2">
           {navigation.map((item) => {
@@ -29,12 +29,12 @@ const Sidebar = () => {
                 to={item.href}
                 className={`group flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors ${
                   isActive
-                    ? "bg-purple-50 text-purple-600 border-r-2 border-purple-600"
+                    ? "bg-primary-50 text-primary-600 border-r-2 border-primary-600"
                     : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
                 }`}
               >
                 <item.icon
-                  className={`mr-3 h-6 w-6 ${isActive ? "text-purple-600" : "text-gray-400 group-hover:text-gray-500"}`}
+                  className={`mr-3 h-6 w-6 ${isActive ? "text-primary-600" : "text-gray-400 group-hover:text-gray-500"}`}
                 />
                 {item.name}
               </Link>
@@ -52,7 +52,7 @@ const Sidebar = () => {
                 className="w-10 h-10 rounded-full object-cover"
               />
             ) : (
-              <div className="w-10 h-10 bg-purple-600 rounded-full flex items-center justify-center">
+              <div className="w-10 h-10 bg-primary-600 rounded-full flex items-center justify-center">
                 <User className="w-6 h-6 text-white" />
               </div>
             )}
