@@ -14,6 +14,7 @@ export const SocketProvider = ({ children }) => {
   useEffect(() => {
     if (user && token) {
       const newSocket = io(import.meta.env.REACT_APP_SERVER_URL || "http://localhost:5000", {
+        withCredentials: true,
         auth: {
           token,
         },
