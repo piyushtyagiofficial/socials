@@ -1,5 +1,3 @@
-"use client"
-
 import { createContext, useContext, useReducer, useEffect } from "react"
 import { authAPI } from "../services/api"
 import toast from "react-hot-toast"
@@ -13,6 +11,7 @@ const initialState = {
   error: null,
 }
 
+// State Logic
 const authReducer = (state, action) => {
   switch (action.type) {
     case "SET_LOADING":
@@ -49,6 +48,7 @@ const authReducer = (state, action) => {
   }
 }
 
+// Provide access to the context
 export const AuthProvider = ({ children }) => {
   const [state, dispatch] = useReducer(authReducer, initialState)
 
@@ -78,6 +78,7 @@ export const AuthProvider = ({ children }) => {
     checkAuth()
   }, [])
 
+  //login logic
   const login = async (email, password) => {
     try {
       dispatch({ type: "SET_LOADING", payload: true })
@@ -99,6 +100,7 @@ export const AuthProvider = ({ children }) => {
     }
   }
 
+  // Register logic
   const register = async (userData) => {
     try {
       dispatch({ type: "SET_LOADING", payload: true })
@@ -120,6 +122,7 @@ export const AuthProvider = ({ children }) => {
     }
   }
 
+  // Logout logic
   const logout = async () => {
     try {
       await authAPI.logout()
@@ -132,6 +135,7 @@ export const AuthProvider = ({ children }) => {
     }
   }
 
+  // Update user profile logic
   const updateUser = (userData) => {
     dispatch({ type: "UPDATE_USER", payload: userData })
   }

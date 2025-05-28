@@ -1,5 +1,3 @@
-// /d:/tyagi/My Projects/socials2.0/client/src/main.jsx
-
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { ToastContainer } from 'react-toastify';

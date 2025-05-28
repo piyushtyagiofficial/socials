@@ -1,5 +1,3 @@
-"use client"
-
 import { useState, useRef } from "react"
 import { usersAPI } from "../../services/api"
 import { X, Camera, User } from "lucide-react"
@@ -13,7 +11,7 @@ const EditProfileModal = ({ user, onClose, onUpdate }) => {
     bio: user.bio || "",
   })
   const [selectedImage, setSelectedImage] = useState(null)
-  const [imagePreview, setImagePreview] = useState(user.profilePicture)
+  const [imagePreview, setImagePreview] = useState(user.profilePicture ? `${import.meta.env.VITE_API_BASE_URL}${user.profilePicture}` : null)
   const [isLoading, setIsLoading] = useState(false)
 
   const fileInputRef = useRef(null)

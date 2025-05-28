@@ -4,8 +4,14 @@ const Post = require("../models/postModel")
 const auth = require("../middleware/auth")
 const multer = require("multer")
 const path = require("path")
-
+const fs = require("fs")
 const router = express.Router()
+
+// Ensure the upload directory exists
+const profileUploadPath = path.join(__dirname, "..", "uploads", "profiles")
+if (!fs.existsSync(profileUploadPath)) {
+  fs.mkdirSync(profileUploadPath, { recursive: true })
+}
 
 // Configure multer for file uploads
 const storage = multer.diskStorage({

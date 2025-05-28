@@ -1,5 +1,3 @@
-"use client"
-
 import { useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
 import { useAuth } from "../../contexts/AuthContext"
@@ -83,7 +81,7 @@ const Navbar = () => {
               >
                 {user?.profilePicture ? (
                   <img
-                    src={user.profilePicture || "/placeholder.svg"}
+                    src={user.profilePicture ? `${import.meta.env.VITE_API_BASE_URL}${user.profilePicture}` : "/placeholder.svg"}
                     alt={user.username}
                     className="w-8 h-8 rounded-full object-cover"
                   />

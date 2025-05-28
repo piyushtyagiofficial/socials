@@ -1,5 +1,3 @@
-"use client"
-
 import { useState, useRef } from "react"
 import { useAuth } from "../../contexts/AuthContext"
 import { postsAPI } from "../../services/api"
@@ -93,7 +91,7 @@ const CreatePost = ({ onPostCreated }) => {
           <div className="flex items-center space-x-3">
             {user?.profilePicture ? (
               <img
-                src={user.profilePicture || "/placeholder.svg"}
+                src={user.profilePicture ? `${import.meta.env.VITE_API_BASE_URL}${user.profilePicture}` : "/placeholder.svg"}
                 alt={user.username}
                 className="w-10 h-10 rounded-full object-cover ring-2 ring-transparent hover:ring-primary-200 transition-all duration-200"
               />
