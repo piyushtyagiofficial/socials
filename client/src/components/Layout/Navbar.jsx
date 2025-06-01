@@ -1,17 +1,25 @@
-import { useState } from "react"
-import { Link, useNavigate } from "react-router-dom"
-import { useAuth } from "../../contexts/AuthContext"
-import { Search, Plus, Heart, MessageCircle, User, LogOut, Settings } from "lucide-react"
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../../contexts/AuthContext";
+import {
+  Search,
+  Plus,
+  Heart,
+  MessageCircle,
+  User,
+  LogOut,
+  Settings,
+} from "lucide-react";
 
 const Navbar = () => {
-  const [showProfileMenu, setShowProfileMenu] = useState(false)
-  const { user, logout } = useAuth()
-  const navigate = useNavigate()
+  const [showProfileMenu, setShowProfileMenu] = useState(false);
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
 
   const handleLogout = async () => {
-    await logout()
-    navigate("/")
-  }
+    await logout();
+    navigate("/");
+  };
 
   return (
     <nav className="bg-white/95 backdrop-blur-md border-b border-gray-200/50 fixed top-0 left-0 right-0 z-50 safe-top">
@@ -25,7 +33,7 @@ const Navbar = () => {
             Socials
           </Link>
 
-          {/* Search Bar - Hidden on mobile */}
+          {/* Search Bar - Hidden on mobile, shown on tablet+ */}
           <div className="hidden md:flex flex-1 max-w-md mx-8">
             <div className="relative w-full">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
@@ -39,16 +47,8 @@ const Navbar = () => {
             </div>
           </div>
 
-          {/* Navigation Icons */}
-          <div className="flex items-center space-x-4">
-            {/* Mobile Search */}
-            <Link
-              to="/search"
-              className="md:hidden p-2 text-gray-600 hover:text-primary-600 hover:bg-primary-50 rounded-full transition-all duration-200"
-            >
-              <Search className="w-6 h-6" />
-            </Link>
-
+          {/* Desktop Navigation Icons - Hidden on mobile */}
+          <div className="hidden lg:flex items-center space-x-4">
             {/* Create Post */}
             <button className="p-2 text-gray-600 hover:text-primary-600 hover:bg-primary-50 rounded-full transition-all duration-200">
               <Plus className="w-6 h-6" />
@@ -81,7 +81,13 @@ const Navbar = () => {
               >
                 {user?.profilePicture ? (
                   <img
-                    src={user.profilePicture ? `${import.meta.env.VITE_API_BASE_URL}${user.profilePicture}` : "/placeholder.svg"}
+                    src={
+                      user.profilePicture
+                        ? `${import.meta.env.VITE_API_BASE_URL}${
+                            user.profilePicture
+                          }`
+                        : "/placeholder.svg"
+                    }
                     alt={user.username}
                     className="w-8 h-8 rounded-full object-cover"
                   />
@@ -122,10 +128,59 @@ const Navbar = () => {
               )}
             </div>
           </div>
+
+          {/* Mobile Actions - Only show essential items */}
+          <div className="flex lg:hidden items-center space-x-2">
+            {/* Create Post */}
+            <button className="p-2 text-gray-600 hover:text-primary-600 hover:bg-primary-50 rounded-full transition-all duration-200">
+              <Plus className="w-6 h-6" />
+            </button>
+
+            {/* Profile Menu for Mobile */}
+            <div className="relative">
+              <button
+                onClick={() => setShowProfileMenu(!showProfileMenu)}
+                className="flex items-center space-x-2 p-1 rounded-full hover:bg-gray-100 transition-all duration-200 ring-2 ring-transparent hover:ring-primary-200"
+              >
+                {user?.profilePicture ? (
+                  <img
+                    src={user.profilePicture ? `${import.meta.env.VITE_API_BASE_URL}${user.profilePicture}` : "/placeholder.svg"}
+                    alt={user.username}
+                    className="w-8 h-8 rounded-full object-cover"
+                  />
+                ) : (
+                  <div className="w-8 h-8 bg-primary-600 rounded-full flex items-center justify-center">
+                    <User className="w-5 h-5 text-white" />
+                  </div>
+                )}
+              </button>
+
+              {/* Mobile Dropdown Menu */}
+              {showProfileMenu && (
+                <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-soft-lg border border-gray-200 py-2 z-50 animate-scale-in">
+                  <button
+                    className="flex items-center w-full px-4 py-2 text-gray-700 hover:bg-gray-100 transition-colors duration-200"
+                    onClick={() => setShowProfileMenu(false)}
+                  >
+                    <Settings className="w-4 h-4 mr-3" />
+                    Settings
+                  </button>
+                  <hr className="my-2" />
+                  <button
+                    onClick={handleLogout}
+                    className="flex items-center w-full px-4 py-2 text-red-600 hover:bg-red-50 transition-colors duration-200"
+                  >
+                    <LogOut className="w-4 h-4 mr-3" />
+                    Logout
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>          
         </div>
       </div>
     </nav>
-  )
-}
+  );
+};
 
-export default Navbar
+export default Navbar;

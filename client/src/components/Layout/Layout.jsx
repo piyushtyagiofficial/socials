@@ -1,5 +1,6 @@
 import Navbar from "./Navbar"
 import Sidebar from "./Sidebar"
+import BottomBar from "./BottomBar"
 
 const Layout = ({ children }) => {
   return (
@@ -10,9 +11,9 @@ const Layout = ({ children }) => {
         {/* Add padding-top to account for fixed navbar */}
         <Sidebar />
         <main className="flex-1 lg:ml-64">
-          <div className="max-w-4xl mx-auto px-4 py-6">{children}</div>
-        </main>
+          <div className="max-w-4xl mx-auto px-4 py-6 pb-20 lg:pb-6">{children}</div>        </main>
       </div>
+       <BottomBar />
     </div>
   )
 }

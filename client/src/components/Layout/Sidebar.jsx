@@ -46,7 +46,7 @@ const Sidebar = () => {
           <div className="flex items-center">
             {user?.profilePicture ? (
               <img
-                src={user.profilePicture || "/placeholder.svg"}
+                src={user.profilePicture ? `${import.meta.env.VITE_API_BASE_URL}${user.profilePicture}` : "/placeholder.svg"}
                 alt={user.username}
                 className="w-10 h-10 rounded-full object-cover"
               />
